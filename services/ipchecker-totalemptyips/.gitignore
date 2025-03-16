@@ -1,0 +1,20 @@
+# Ignore the vendor directory, which contains dependencies
+/vendor/
+
+# Ignore Composer's autoload files
+/composer.phar
+
+# Ignore IDE-specific files (e.g., from PHPStorm, VSCode)
+.idea/
+.vscode/
+
+# Ignore system files like DS_Store (macOS) or Thumbs.db (Windows)
+.DS_Store
+Thumbs.db
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+
+# Ignore test coverage reports
+coverage/

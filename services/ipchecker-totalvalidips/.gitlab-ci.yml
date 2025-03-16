@@ -1,0 +1,11 @@
+image: python:3.8 
+stages: # defines stages in CI/CD pipeline
+    - test # specific job
+
+test:
+  stage: test # specifies that job belongs to the test stage
+  script: #array of commands that CI/CD runner should execute
+    - apt-get update -qy
+    - apt-get install -y python3 python3-pip
+    - cd src
+    - python3 -m unittest test_function.py

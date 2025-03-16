@@ -1,0 +1,22 @@
+image: php:8.3 # version of php i have installed
+
+cache:
+  paths:
+    - vendor/
+
+before_script:
+  # Install git, the php image doesn't have installed
+  - apt-get update -yqq
+  - apt-get install git -yqq
+
+  # Install Composer
+  - curl -sS https://getcomposer.org/installer | php
+  - mv composer.phar /usr/local/bin/composer
+
+  # Install Composer dependencies
+  - composer install --prefer-dist --no-interaction
+
+test:
+  stage: test
+  script:
+    - vendor/bin/phpunit src/

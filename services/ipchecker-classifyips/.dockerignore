@@ -1,0 +1,45 @@
+# Node modules directory
+node_modules
+
+# Dependency directories
+jspm_packages
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variable files
+.env
+
+# Editor directories and files
+.vscode/
+.idea/
+*.sublime-workspace
+
+# OS generated files and directories
+.DS_Store
+Thumbs.db
+
+# Build output directories
+dist/
+build/
+
+# Docker-related files
+Dockerfile*
+.dockerignore
+
+# Git-related files
+.git
+.gitignore
+
+# Exclude package-lock.json (if you want Docker to always install the latest dependencies)
+# /package-lock.json
+
+# Exclude test and development files
+test/
+tests/
+__tests__/
+coverage/

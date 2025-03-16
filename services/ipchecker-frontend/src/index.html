@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>IPAddressChecker</title>
+
+<script type="text/javascript">
+
+// localhost URL for each function
+// let totalIPURL = "http://localhost:70/";
+// let totalEmptyIPURL = "http://localhost:90/";
+// let totalValidIPURL = "http://localhost:8080/";
+// let classifyIPURL = "http://localhost:3000/";
+// let findCountryIPURL = "http://localhost:3001/";
+// let findBadIPURL = "http://localhost:3002/";
+
+// // live rancher ingress controller urls
+// let totalIPURL = "http://ipcheckertotalips.40429391.qpc.qubcloud.uk/";
+// let totalEmptyIPURL = "http://ipcheckertotalemptyips.40429391.qpc.qubcloud.uk/";
+// let totalValidIPURL = "http://ipcheckertotalvalidips.40429391.qpc.qubcloud.uk/";
+// let classifyIPURL = "http://ipcheckerclassifyips.40429391.qpc.qubcloud.uk/";
+// let findCountryIPURL = "http://ipcheckerfindcountry.40429391.qpc.qubcloud.uk/";
+// let findBadIPURL = "http://ipcheckerfindbadips.40429391.qpc.qubcloud.uk/";
+
+// proxy
+//const proxyURL = "http://ipcheckerproxy.40429391.qpc.qubcloud.uk/";
+
+// Round Robin load balancing Task D
+// list of proxy urls
+const proxyURLs = [
+    "http://ipcheckerproxy.40429391.qpc.qubcloud.uk/",
+    "http://ipcheckerproxy2.40429391.qpc.qubcloud.uk/",
+    "http://ipcheckerproxy3.40429391.qpc.qubcloud.uk/"
+];
+
+let currentProxy = 0; //track current proxy index
+
+// function to get the next proxy url
+function getNextProxyURL() {
+    const url = proxyURLs[currentProxy];
+    currentProxy = (currentProxy + 1) % proxyURLs.length; // move to the next url
+    return url;
+}
+
+// function to display the total amount of IPs, total amount of IPv4 and total amount of IPv6
+function displayTotalIP(total_ips)
+{
+    document.getElementById('output-text').value = 
+    'Total IP addresses = ' + total_ips;
+}
+
+// function to display the total amount of empty IPs
+function displayTotalEmpty(total_empty_ips)
+{
+    document.getElementById('output-text').value = 'Total empty IP addresses = ' + total_empty_ips;
+
+}
+
+// function to display the total amount of valid IPs
+function displayTotalValid(output)
+{
+    document.getElementById('output-text').value = output;
+};
+
+// function to display the classification of IPv4 or IPv6
+function displayClassifyIP(classifications) 
+{
+    let output = '';
+    for (let ip in classifications) {
+        output += `${ip} -> ${classifications[ip]}\n`;
+    };
+    document.getElementById('output-text').value = output; 
+};
+
+// function to display the country information for an IPv4 address only
+function displayCountryIP(countryips) 
+{
+    let output = '';
+    for (let ip in countryips) {
+        output += `${ip} -> ${countryips[ip]}\n`;
+    }
+    document.getElementById('output-text').value = output;
+}
+
+function displayBadIP(bad_ips) 
+{
+    let output = '';
+    for (let ip in bad_ips) {
+        output += `${ip} -> ${bad_ips[ip]}\n`;
+    }
+    document.getElementById('output-text').value = output;
+}
+
+function clearText()
+{
+    document.getElementById('input-text').value = '';
+    document.getElementById('output-text').value = '';
+}
+
+// sends IP addresses to the server to get the total amount of IP addresses
+function getTotalIPs()
+{
+  let items = document.getElementById('input-text').value.trim();
+
+  // if button is clicked with no ip addresses entered
+  if(items == '') {
+    document.getElementById('output-text').value = 'Please enter IP addresses.';
+    return;
+  }
+
+  let attempts = 0; // track the number of proxy url attempts
+
+  function tryNextProxyURL() {
+    if(attempts >= proxyURLs.length) {
+        document.getElementById('output-text').value = 'All proxy urls have failed. Please try again later.';
+        return;
+    }
+
+    let proxyURL = getNextProxyURL(); // get the current proxy url in the round robin sequence
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4) {
+            if (this.status == 200) {
+                var j = JSON.parse(this.response);
+                console.log('test total ips -- ' + j.total_ips);
+                let total_ips = j.total_ips;
+                displayTotalIP(total_ips);
+            } else {
+                attempts++;
+                tryNextProxyURL(); // try next proxy url if this one fails
+            }
+        }
+    };
+    xhttp.open("GET", proxyURL + "totalips?items=" + items);
+    xhttp.send();
+  }
+  tryNextProxyURL(); // start the first proxy url attempt
+}
+
+// sends IP addresses to the server for total amount of empty IPs
+function getTotalEmptyIPs()
+{
+  let items = document.getElementById('input-text').value.trim();
+
+  // if button is clicked with no ip addresses entered
+  if(items == '') {
+    document.getElementById('output-text').value = 'Please enter IP addresses.';
+    return;
+  }
+
+  let attempts = 0;
+
+  function tryNextProxyURL() {
+    if(attempts >= proxyURLs.length) {
+        document.getElementById('output-text').value = 'All proxy urls have failed. Please try again later.';
+        return;
+    }
+
+    let proxyURL = getNextProxyURL();
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if(this.readyState == 4) {
+            if(this.status == 200) {
+                var j = JSON.parse(this.response);
+                console.log('total total empty ips -- ' + j.total_empty_ips);
+                let total_empty_ips = j.total_empty_ips;
+                displayTotalEmpty(total_empty_ips);
+            } else {
+                attempts++;
+                tryNextProxyURL();
+            }
+        }
+    }
+    xhttp.open("GET", proxyURL + "totalemptyips?items=" + items);
+    xhttp.send();
+  }
+  tryNextProxyURL();
+}
+  
+
+
+// sends IP addresses to the server for total amount of valid IPs
+function getTotalValidIPs()
+{
+  // trim whitespace from the items input before sending it to the server, for an extra layer of robustness
+  let items = document.getElementById('input-text').value.trim();
+//   console.log("Requesting valid IPs for:", items); // debug log
+
+  // if button is clicked with no ip addresses entered
+  if(items == '') {
+    document.getElementById('output-text').value = 'Please enter IP addresses.';
+    return;
+  }
+
+  let attempts = 0;
+
+  function tryNextProxyURL() {
+    if(attempts >= proxyURLs.length) {
+        document.getElementById('output-text').value = 'All proxy urls have failed. Please try again later.';
+        return;
+    }
+
+    let proxyURL = getNextProxyURL();
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if(this.readyState == 4) {
+            if(this.status == 200) {
+                var j = JSON.parse(this.response);
+                console.log('test valid ips -- ' + j.output);
+                let output = j.output;
+                displayTotalValid(output);
+            } else {
+                attempts++;
+                tryNextProxyURL();
+            }
+        }
+    };
+    xhttp.open("GET", proxyURL + "totalvalidips?items=" + items);
+    xhttp.send();
+  }
+  tryNextProxyURL();
+}
+  
+
+
+// sends IP addresses to the server for classification as IPv4, IPv6, or Invalid 
+function classifyIPs() {
+
+   let items = document.getElementById('input-text').value.trim();
+
+    if(items == '') {
+    document.getElementById('output-text').value = 'Please enter IP addresses.';
+    return;
+  }
+
+  let attempts = 0;
+
+  function tryNextProxyURL() {
+    if(attempts >= proxyURLs.length) {
+        document.getElementById('output-text').value = 'All proxy urls have failed. Please try again later.';
+        return;
+    }
+
+    let proxyURL = getNextProxyURL();
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if(this.readyState == 4) {
+            if(this.status == 200) {
+                var j = JSON.parse(this.response);
+                console.log('test classify ips -- ' + j.classifications);
+                let classifications = j.classifications;
+                displayClassifyIP(classifications);
+            } else {
+                attempts++;
+                tryNextProxyURL();
+            }
+        }
+    };
+    xhttp.open("GET", proxyURL + "classifyips?items=" + items);
+    xhttp.send();
+  }
+  tryNextProxyURL();
+}
+    
+
+
+// sends IP addresses to the server and if IPv4, will return the country information if starts with 3 specific digits
+function findCountry() {
+
+    let items = document.getElementById('input-text').value.trim();
+
+    if(items == '') {
+    document.getElementById('output-text').value = 'Please enter IP addresses.';
+    return;
+  }
+
+  let attempts = 0;
+
+  function tryNextProxyURL() {
+    if(attempts >= proxyURLs.length) {
+        document.getElementById('output-text').value = 'All proxy urls have failed. Please try again later.';
+        return;
+    }
+
+    let proxyURL = getNextProxyURL();
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if(this.readyState == 4) {
+            if(this.status == 200) {
+               var j = JSON.parse(this.response); 
+               console.log('test country ips -- ' + j.countryips);
+               let countryips = j.countryips;
+               displayCountryIP(countryips);
+            } else {
+                attempts++;
+                tryNextProxyURL();
+            }
+        }
+    };
+    xhttp.open("GET", proxyURL + "findcountry?items=" + items);
+    xhttp.send();
+  }
+  tryNextProxyURL();
+}
+    
+
+
+// find known bad ips in a list of ips
+function findBadIPs() {
+
+    let items = document.getElementById('input-text').value;
+
+    if(items == '') {
+    document.getElementById('output-text').value = 'Please enter IP addresses.';
+    return;
+  }
+
+  let attempts = 0;
+
+  function tryNextProxyURL() {
+    if(attempts >= proxyURLs.length) {
+        document.getElementById('output-text').value = 'All proxy urls have failed. Please try again later.';
+        return;
+    }
+
+    let proxyURL = getNextProxyURL();
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if(this.readyState == 4) {
+            if(this.status == 200) {
+               var j = JSON.parse(this.response); 
+               console.log('test bad ips -- ' + j.bad_ips);
+               let bad_ips = j.bad_ips;
+               displayBadIP(bad_ips);
+            } else {
+                attempts++;
+                tryNextProxyURL();
+            }
+        }
+    };
+    xhttp.open("GET", proxyURL + "findbadips?items=" + items);
+    xhttp.send();
+  }
+  tryNextProxyURL();
+}
+
+
+</script>
+
+<style type="text/css">
+body  {
+    font-size: 150%;
+    font-family: monospace;
+}
+label {
+    display: inline-block;
+    width: 150px;
+    text-align: left;
+}
+#logo
+{
+    font-family: Calibri, sans-serif;
+    font-weight: lighter;
+    font-size: 30px;
+    color: #505050;
+    margin: 0.5em;
+}
+#normal-text
+{
+    font-family: Calibri, sans-serif;
+    font-size: 20px;
+    margin: 0.5em;
+}
+#ipcheck
+{
+    text-align: center;
+    margin-top: 1em;
+}
+#input-div
+{
+    text-align: center;
+    margin-top: 1em;
+    background-color:#d5d8dc  ;
+}
+#output-div
+{
+    text-align: center;
+    background-color:#808b96 ;
+}
+
+.input-items {
+      font-size: 90%;
+      color: black;
+      background-color:white ;
+      padding: 0.2em;
+      margin: 0.2em;
+      font-family: monospace;
+      letter-spacing: 0.1em;
+      width: 600px;
+
+  }
+
+.display-output {
+    font-size: 90%;
+    color: black;
+    background-color:white ;
+    padding: 0.2em;
+    margin: 0.2em;
+    font-family: monospace;
+    letter-spacing: 0.1em;
+    width: 600px;
+
+}
+
+.button-active {
+    background-color:   #2874a6  ;
+    color: white;
+    padding: 0px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+    margin: 4px 2px;
+    cursor: pointer;
+    height: 50px;
+    width: 400px;
+}
+
+.button-inactive {
+    background-color: gray;
+    color: white;
+    padding: 0px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+    margin: 4px 2px;
+    cursor: pointer;
+    height: 50px;
+    width: 400px;
+}
+
+.button-clear {
+    background-color:  #c0392b ;
+    color: white;
+    padding: 0px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+    margin: 4px 2px;
+    cursor: pointer;
+    height: 40px;
+    width: 400px;
+}
+
+</style>
+
+</head>
+<body>
+<div id="ipcheck">
+    <div id="logo">
+        IP Address Checker
+    </div>
+    <div id="input-div">
+        <p id="normal-text">
+          Paste your IP addresses here (separated by commas)..
+        </p>
+        <textarea class="input-items" id="input-text" rows="5" cols="35" placeholder="Paste your IP addresses here.." value="">
+        </textarea>
+    </div>
+    <div id="output-div">
+       <p id="normal-text">
+          Results
+        </p>
+        <textarea class="display-output" id="output-text" rows="5" cols="35" readonly=1 placeholder="Results here..." value="">
+        </textarea>
+    </div>
+    <div>
+        <button class="button-active" onclick="getTotalIPs();">Total IP addresses</button>
+    </div>
+    <div>
+        <button class="button-active" onclick="getTotalEmptyIPs();">Total empty IP addresses</button>
+    </div>
+    <div>
+        <button class="button-active" onclick="getTotalValidIPs();">Total valid IP addresses</button>
+    </div>
+    <div>
+        <button class="button-active" onclick="classifyIPs();">Classify between IPv4 and IPv6</button>
+    </div>
+    <div>
+        <button class="button-active" onclick="findCountry();">Find country information</button>
+    </div>
+    <div>
+        <button class="button-active" onclick="findBadIPs();">Find bad IP addresses</button>
+    </div>
+    <div>
+        <button class="button-clear" onclick="clearText();">Clear</button>
+    </div>
+
+</div>
+</body>
+
+<script type="text/javascript">
+</script>
+
+</html>

@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: repository.hal.davecutting.uk:5005/40429391/ipchecker-frontend:latest
+    container_name: ipcheckerfrontend40429391
+    ports:
+      - "80:80"
+ 
+
+  totalips:
+    image: repository.hal.davecutting.uk:5005/40429391/ipchecker-totalips:latest
+    container_name: ipcheckertotalips40429391
+    ports:
+      - "70:80"
+
+
+  totalemptyips:
+    image: repository.hal.davecutting.uk:5005/40429391/ipchecker-totalemptyips:latest
+    container_name: ipcheckertotalemptyips40429391
+    ports:
+      - "90:80"
+
+
+  totalvalidips:
+    image: repository.hal.davecutting.uk:5005/40429391/ipchecker-totalvalidips:latest
+    container_name: ipcheckertotalvalidips40429391
+    ports:
+      - "8080:8080"
+    
+
+  classifyips:
+    image: repository.hal.davecutting.uk:5005/40429391/ipchecker-classifyips:latest
+    container_name: ipcheckerclassifyips40429391
+    ports:
+      - "3000:3000"
+ 
+
+  findcountry:
+    image: repository.hal.davecutting.uk:5005/40429391/ipchecker-findcountry:latest
+    container_name: ipcheckerfindcountry40429391
+    ports:
+      - "3001:3001"
+  
+
+  findbadips:
+    image: repository.hal.davecutting.uk:5005/40429391/ipchecker-findbadips:latest
+    container_name: ipcheckerfindbadips40429391
+    ports:
+      - "3002:80"
+    
+
+  proxy:
+    image: repository.hal.davecutting.uk:5005/40429391/ipchecker-proxy:latest
+    container_name: ipcheckerproxy40429391
+    ports:
+      - "4001:4001"
+    depends_on:
+      - frontend
+      - totalips
+      - totalemptyips
+      - totalvalidips
+      - classifyips
+      - findcountry
+      - findbadips
+ 

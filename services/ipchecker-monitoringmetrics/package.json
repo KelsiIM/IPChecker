@@ -1,0 +1,17 @@
+{
+  "name": "ipchecker-monitoringmetrics",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/cloud-sql-connector": "^1.3.4",
+    "axios": "^1.7.5",
+    "mysql2": "^3.11.0"
+  }
+}

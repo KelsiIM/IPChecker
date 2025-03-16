@@ -1,0 +1,344 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ipcheckerclassifyips40429391
+  labels:
+    io.kompose.service: classifyips
+spec:
+  ports:
+    - name: "3000"
+      port: 3000
+      targetPort: 3000
+  selector:
+    io.kompose.service: classifyips
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ipcheckerfindbadips40429391
+  labels:
+    io.kompose.service: findbadips
+spec:
+  ports:
+    - name: "3002"
+      port: 3002
+      targetPort: 80
+  selector:
+    io.kompose.service: findbadips
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ipcheckerfindcountry40429391
+  labels:
+    io.kompose.service: findcountry
+spec:
+  ports:
+    - name: "3001"
+      port: 3001
+      targetPort: 3001
+  selector:
+    io.kompose.service: findcountry
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ipcheckerfrontend40429391
+  labels:
+    io.kompose.service: frontend
+spec:
+  ports:
+    - name: "80"
+      port: 80
+      targetPort: 80
+  selector:
+    io.kompose.service: frontend
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ipcheckerproxy40429391
+  labels:
+    io.kompose.service: proxy
+spec:
+  ports:
+    - name: "4001"
+      port: 4001
+      targetPort: 4001
+  selector:
+    io.kompose.service: proxy
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ipcheckertotalemptyips40429391
+  labels:
+    io.kompose.service: totalemptyips
+spec:
+  ports:
+    - name: "90"
+      port: 90
+      targetPort: 80
+  selector:
+    io.kompose.service: totalemptyips
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ipcheckertotalips40429391
+  labels:
+    io.kompose.service: totalips
+spec:
+  ports:
+    - name: "70"
+      port: 70
+      targetPort: 80
+  selector:
+    io.kompose.service: totalips
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ipcheckertotalvalidips40429391
+  labels:
+    io.kompose.service: totalvalidips
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  selector:
+    io.kompose.service: totalvalidips
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ipcheckerclassifyips40429391
+  labels:
+    io.kompose.service: classifyips
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: classifyips
+  template:
+    metadata:
+      annotations:
+      labels:
+        io.kompose.service: classifyips
+    spec:
+      containers:
+        - image: repository.hal.davecutting.uk:5005/40429391/ipchecker-classifyips:latest
+          name: ipcheckerclassifyips40429391
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+      imagePullSecrets:
+       - name: kelsi.40429391
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ipcheckerfindbadips40429391
+  labels:
+    io.kompose.service: findbadips
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: findbadips
+  template:
+    metadata:
+      annotations:
+      labels:
+        io.kompose.service: findbadips
+    spec:
+      containers:
+        - image: repository.hal.davecutting.uk:5005/40429391/ipchecker-findbadips:latest
+          name: ipcheckerfindbadips40429391
+          ports:
+            - containerPort: 80
+              protocol: TCP
+      imagePullSecrets:
+       - name: kelsi.40429391
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ipcheckerfindcountry40429391
+  labels:
+    io.kompose.service: findcountry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: findcountry
+  template:
+    metadata:
+      annotations:
+      labels:
+        io.kompose.service: findcountry
+    spec:
+      containers:
+        - image: repository.hal.davecutting.uk:5005/40429391/ipchecker-findcountry:latest
+          name: ipcheckerfindcountry40429391
+          ports:
+            - containerPort: 3001
+              protocol: TCP
+      imagePullSecrets:
+       - name: kelsi.40429391
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ipcheckerfrontend40429391
+  labels:
+    io.kompose.service: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: frontend
+  template:
+    metadata:
+      annotations:
+      labels:
+        io.kompose.service: frontend
+    spec:
+      containers:
+        - image: repository.hal.davecutting.uk:5005/40429391/ipchecker-frontend:latest
+          name: ipcheckerfrontend40429391
+          ports:
+            - containerPort: 80
+              protocol: TCP
+      imagePullSecrets:
+       - name: kelsi.40429391
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ipcheckerproxy40429391
+  labels:
+    io.kompose.service: proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: proxy
+  template:
+    metadata:
+      annotations:
+      labels:
+        io.kompose.service: proxy
+    spec:
+      containers:
+        - image: repository.hal.davecutting.uk:5005/40429391/ipchecker-proxy:latest
+          name: ipcheckerproxy40429391
+          ports:
+            - containerPort: 4001
+              protocol: TCP
+      imagePullSecrets:
+       - name: kelsi.40429391
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ipcheckertotalemptyips40429391
+  labels:
+    io.kompose.service: totalemptyips
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: totalemptyips
+  template:
+    metadata:
+      annotations:
+      labels:
+        io.kompose.service: totalemptyips
+    spec:
+      containers:
+        - image: repository.hal.davecutting.uk:5005/40429391/ipchecker-totalemptyips:latest
+          name: ipcheckertotalemptyips40429391
+          ports:
+            - containerPort: 80
+              protocol: TCP
+      imagePullSecrets:
+       - name: kelsi.40429391
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ipcheckertotalips40429391
+  labels:
+    io.kompose.service: totalips
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: totalips
+  template:
+    metadata:
+      annotations:
+      labels:
+        io.kompose.service: totalips
+    spec:
+      containers:
+        - image: repository.hal.davecutting.uk:5005/40429391/ipchecker-totalips:latest
+          name: ipcheckertotalips40429391
+          ports:
+            - containerPort: 80
+              protocol: TCP
+      imagePullSecrets:
+       - name: kelsi.40429391
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ipcheckertotalvalidips40429391
+  labels:
+    io.kompose.service: totalvalidips
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: totalvalidips
+  template:
+    metadata:
+      annotations:
+      labels:
+        io.kompose.service: totalvalidips
+    spec:
+      containers:
+        - image: repository.hal.davecutting.uk:5005/40429391/ipchecker-totalvalidips:latest
+          name: ipcheckertotalvalidips40429391
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+      imagePullSecrets:
+       - name: kelsi.40429391
+      restartPolicy: Always
+
