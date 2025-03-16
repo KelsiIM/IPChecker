@@ -18,7 +18,7 @@ into the respective services.
 - Count Total IPs - Determines the total number of submitted IPs
 - Count Empty IPs - Checks how many IP fields were left empty
 - Reverse Proxy - Routes requests efficiently between services
-- Monitoring Service - Planned to track response times, but was not fully implemented due to time constraints
+- Monitoring Service - To track response times
 
 ### Technologies Used
 - Backend: Node.js, Python, PHP
