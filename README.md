@@ -7,7 +7,7 @@ of independent services that handle IP classification, validation, bad IP detect
 and counting valid/empty IPs. This project was deploying using Docker and Kubernetes (Rancher), with GitLab
 CI/CD pipelines for automated testing and deployment.
 
-Note: as per the project brief, all IP validation rules, bad IP lists, and country mappings were hardcoded
+**Note:** as per the project brief, all IP validation rules, bad IP lists, and country mappings were hardcoded
 into the respective services.
 
 ### Features
@@ -27,7 +27,7 @@ into the respective services.
 - Testing: Jest (Node.js), PHPUnit (PHP), Unittest (Python)
 
 ### Setup & Running the Project
-#### Prerequisites
+### Prerequisites
 Ensure you have the following installed:
 - Docker
 - Docker Compose
@@ -35,23 +35,24 @@ Ensure you have the following installed:
 - Python & pip
 - PHP & Composer
 
-#### Running the Entire Project (Docker)
+### Running the Entire Project (Docker)
 To start all microservices locally:
 - docker-compose up --build
 - Frontend will be available at http://localhost:80
 
-#### Running Individual Services
+### Running Individual Services
 Each service can be run separately if needed.
-Example - Run ipchecker-classifyips (Node.js):
+
+**Example** - Run ipchecker-classifyips (Node.js):
 - cd services/ipchecker-classifyips
 - npm install
 - npm start
 
-Example - Run ipchecker-totalvalidips (Python):
+**Example** - Run ipchecker-totalvalidips (Python):
 - cd services/ipchecker-totalvalidips
 - pip install -r requirements.txt
 - python index.py
 
-Example - Run ipchecker-findbadips (PHP):
+**Example** - Run ipchecker-findbadips (PHP):
 - cd services/ipchecker-findbadips
 - php -S localhost:3002 -t .
