@@ -4,11 +4,12 @@
 ### Overview
 IPChecker is a microservices-based application designed to process and analyse IP addresses. It consists
 of independent services that handle IP classification, validation, bad IP detection, country lookups, 
-and counting valid/empty IPs. This project was deploying using Docker and Kubernetes (Rancher), with GitLab
-CI/CD pipelines for automated testing and deployment.
+and counting valid/empty IPs. This project was deploying using Docker and Kubernetes (via Rancher), with GitLab
+CI/CD pipelines for automated testing.
 
 **Note:** as per the project brief, all IP validation rules, bad IP lists, and country mappings were hardcoded
 into the respective services.
+Each service was originally in its own GitLab repo, but they’ve been brought together here to make the project easier to run locally.
 
 ### Features
 - Classify IPs - Determines if an IP is IPv4, IPv6, or invalid
@@ -23,22 +24,24 @@ into the respective services.
 ### Technologies Used
 - Backend: Node.js, Python, PHP
 - Frontend: HTML, JavaScript
-- Infrastructure: Docker, Kubernetes (Rancher), GitLab CI/CD Pipeline
+- Infrastructure: Docker, Kubernetes (via Rancher), GitLab CI/CD Pipeline
 - Testing: Jest (Node.js), PHPUnit (PHP), Unittest (Python)
 
 ### Setup & Running the Project
 ### Prerequisites
 Ensure you have the following installed:
-- Docker
-- Docker Compose
+- Docker (inc Docker Compose)
+
+- Optional, for manual runs: 
 - Node.js & npm
-- Python & pip
+- Python3 & pip
 - PHP & Composer
 
 ### Running the Entire Project (Docker)
-To start all microservices locally:
+To start all microservices locally via the terminal:
 - docker-compose up --build
-- Frontend will be available at http://localhost:80
+- Once everything is running, the frontend will be available at: http://localhost:80
+- To stop the application, press Ctrl + C, then run docker-compose down
 
 ### Running Individual Services
 Each service can be run separately if needed.
